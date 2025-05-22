@@ -1,0 +1,1361 @@
+openapi: 3.0.1
+info:
+  title: CinemaAPI
+  version: '1.0'
+paths:
+  /api/Hall:
+    get:
+      tags:
+        - Hall
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+    post:
+      tags:
+        - Hall
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHallDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateHallDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateHallDTO'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/HallDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HallDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/HallDTO'
+  /api/Hall/{id}:
+    get:
+      tags:
+        - Hall
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/HallDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HallDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/HallDTO'
+    put:
+      tags:
+        - Hall
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateHallDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateHallDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateHallDTO'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - Hall
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/Hall/search:
+    get:
+      tags:
+        - Hall
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+  /api/Hall/location:
+    get:
+      tags:
+        - Hall
+      parameters:
+        - name: location
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HallDTO'
+  /api/Movie:
+    get:
+      tags:
+        - Movie
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+    post:
+      tags:
+        - Movie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMovieDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateMovieDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateMovieDTO'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MovieDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MovieDTO'
+  /api/Movie/{id}:
+    get:
+      tags:
+        - Movie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MovieDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MovieDTO'
+    put:
+      tags:
+        - Movie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMovieDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMovieDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateMovieDTO'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - Movie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/Movie/year:
+    get:
+      tags:
+        - Movie
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+  /api/Movie/genre:
+    get:
+      tags:
+        - Movie
+      parameters:
+        - name: genre
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+  /api/Movie/3D:
+    get:
+      tags:
+        - Movie
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieDTO'
+  /api/Projection:
+    get:
+      tags:
+        - Projection
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDTO'
+    post:
+      tags:
+        - Projection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectionDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectionDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectionDTO'
+      responses:
+        '200':
+          description: Success
+  /api/Projection/by-date:
+    get:
+      tags:
+        - Projection
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectionDTO'
+  /api/Projection/{id}:
+    get:
+      tags:
+        - Projection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProjectionDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectionDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProjectionDTO'
+    put:
+      tags:
+        - Projection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectionDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectionDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectionDTO'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - Projection
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/Reservation:
+    get:
+      tags:
+        - Reservation
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationDTO'
+    post:
+      tags:
+        - Reservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationDTO'
+      responses:
+        '200':
+          description: Success
+  /api/Reservation/{id}:
+    get:
+      tags:
+        - Reservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ReservationDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDTO'
+    put:
+      tags:
+        - Reservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReservationDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReservationDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateReservationDTO'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - Reservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/Reservation/user/{userId}:
+    get:
+      tags:
+        - Reservation
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationDTO'
+  /api/User/register:
+    post:
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDTO'
+      responses:
+        '200':
+          description: Success
+  /api/User/login:
+    post:
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDTO'
+      responses:
+        '200':
+          description: Success
+  /api/User:
+    get:
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+  /api/User/{id}:
+    get:
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+    put:
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDTO'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDTO'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDTO'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/User/by-username:
+    get:
+      tags:
+        - User
+      parameters:
+        - name: username
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+  /api/User/by-email:
+    get:
+      tags:
+        - User
+      parameters:
+        - name: email
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+components:
+  schemas:
+    CreateHallDTO:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        capacity:
+          type: integer
+          format: int32
+        has3D:
+          type: boolean
+        locationDescription:
+          maxLength: 100
+          type: string
+          nullable: true
+        soundSystemQuality:
+          type: number
+          format: double
+      additionalProperties: false
+    CreateMovieDTO:
+      required:
+        - genre
+        - title
+      type: object
+      properties:
+        title:
+          maxLength: 150
+          minLength: 1
+          type: string
+        description:
+          maxLength: 500
+          type: string
+          nullable: true
+        genre:
+          maxLength: 50
+          minLength: 1
+          type: string
+        durationMinutes:
+          type: integer
+          format: int32
+        releaseDate:
+          type: string
+          format: date-time
+        is3D:
+          type: boolean
+      additionalProperties: false
+    CreateProjectionDTO:
+      required:
+        - hallId
+        - movieId
+        - startTime
+      type: object
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+        isPremiere:
+          type: boolean
+        movieId:
+          type: integer
+          format: int32
+        hallId:
+          type: integer
+          format: int32
+      additionalProperties: false
+    CreateReservationDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int32
+        projectionId:
+          type: integer
+          format: int32
+        numberOfSeats:
+          type: integer
+          format: int32
+        reservationTime:
+          type: string
+          format: date-time
+        isConfirmed:
+          type: boolean
+      additionalProperties: false
+    Hall:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        capacity:
+          type: integer
+          format: int32
+        has3D:
+          type: boolean
+        locationDescription:
+          maxLength: 100
+          type: string
+          nullable: true
+        soundSystemQuality:
+          type: number
+          format: double
+        projections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Projection'
+          nullable: true
+      additionalProperties: false
+    HallDTO:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        capacity:
+          type: integer
+          format: int32
+        has3D:
+          type: boolean
+        locationDescription:
+          maxLength: 100
+          type: string
+          nullable: true
+        soundSystemQuality:
+          type: number
+          format: double
+      additionalProperties: false
+    LoginUserDTO:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          minLength: 1
+          type: string
+        password:
+          minLength: 1
+          type: string
+      additionalProperties: false
+    Movie:
+      required:
+        - genre
+        - title
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          maxLength: 150
+          minLength: 1
+          type: string
+        description:
+          maxLength: 500
+          type: string
+          nullable: true
+        genre:
+          maxLength: 50
+          minLength: 1
+          type: string
+        durationMinutes:
+          type: integer
+          format: int32
+        releaseDate:
+          type: string
+          format: date-time
+        is3D:
+          type: boolean
+        projections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Projection'
+          nullable: true
+      additionalProperties: false
+    MovieDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        genre:
+          type: string
+          nullable: true
+        durationMinutes:
+          type: integer
+          format: int32
+        releaseDate:
+          type: string
+          format: date-time
+        is3D:
+          type: boolean
+      additionalProperties: false
+    Projection:
+      required:
+        - startTime
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        startTime:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+        isPremiere:
+          type: boolean
+        movieId:
+          type: integer
+          format: int32
+        movie:
+          $ref: '#/components/schemas/Movie'
+        hallId:
+          type: integer
+          format: int32
+        hall:
+          $ref: '#/components/schemas/Hall'
+        duration:
+          $ref: '#/components/schemas/TimeSpan'
+        durationMinutes:
+          type: integer
+          format: int32
+          readOnly: true
+        reservations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reservation'
+          nullable: true
+      additionalProperties: false
+    ProjectionDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        startTime:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+        isPremiere:
+          type: boolean
+        movieId:
+          type: integer
+          format: int32
+        movie:
+          $ref: '#/components/schemas/MovieDTO'
+        hall:
+          $ref: '#/components/schemas/HallDTO'
+        hallId:
+          type: integer
+          format: int32
+        durationMinutes:
+          type: integer
+          format: int32
+      additionalProperties: false
+    RegisterUserDTO:
+      required:
+        - email
+        - fullName
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        fullName:
+          maxLength: 100
+          minLength: 1
+          type: string
+        email:
+          maxLength: 100
+          minLength: 1
+          type: string
+        password:
+          type: string
+          nullable: true
+      additionalProperties: false
+    Reservation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        userId:
+          type: integer
+          format: int32
+        user:
+          $ref: '#/components/schemas/User'
+        projectionId:
+          type: integer
+          format: int32
+        numberOfSeats:
+          maximum: 2147483647
+          minimum: 1
+          type: integer
+          format: int32
+        reservationTime:
+          type: string
+          format: date-time
+        isConfirmed:
+          type: boolean
+        totalPrice:
+          type: number
+          format: double
+      additionalProperties: false
+    ReservationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        userId:
+          type: integer
+          format: int32
+        user:
+          $ref: '#/components/schemas/User'
+        projectionId:
+          type: integer
+          format: int32
+        projection:
+          $ref: '#/components/schemas/Projection'
+        numberOfSeats:
+          maximum: 2147483647
+          minimum: 1
+          type: integer
+          format: int32
+        reservationTime:
+          type: string
+          format: date-time
+        isConfirmed:
+          type: boolean
+        totalPrice:
+          type: number
+          format: double
+      additionalProperties: false
+    TimeSpan:
+      type: object
+      properties:
+        ticks:
+          type: integer
+          format: int64
+        days:
+          type: integer
+          format: int32
+          readOnly: true
+        hours:
+          type: integer
+          format: int32
+          readOnly: true
+        milliseconds:
+          type: integer
+          format: int32
+          readOnly: true
+        microseconds:
+          type: integer
+          format: int32
+          readOnly: true
+        nanoseconds:
+          type: integer
+          format: int32
+          readOnly: true
+        minutes:
+          type: integer
+          format: int32
+          readOnly: true
+        seconds:
+          type: integer
+          format: int32
+          readOnly: true
+        totalDays:
+          type: number
+          format: double
+          readOnly: true
+        totalHours:
+          type: number
+          format: double
+          readOnly: true
+        totalMilliseconds:
+          type: number
+          format: double
+          readOnly: true
+        totalMicroseconds:
+          type: number
+          format: double
+          readOnly: true
+        totalNanoseconds:
+          type: number
+          format: double
+          readOnly: true
+        totalMinutes:
+          type: number
+          format: double
+          readOnly: true
+        totalSeconds:
+          type: number
+          format: double
+          readOnly: true
+      additionalProperties: false
+    UpdateHallDTO:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+        capacity:
+          type: integer
+          format: int32
+        has3D:
+          type: boolean
+        soundSystemQuality:
+          type: number
+          format: double
+      additionalProperties: false
+    UpdateMovieDTO:
+      type: object
+      properties:
+        description:
+          maxLength: 500
+          type: string
+          nullable: true
+        is3D:
+          type: boolean
+      additionalProperties: false
+    UpdateProjectionDTO:
+      required:
+        - hallId
+        - movieId
+        - startTime
+      type: object
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+        isPremiere:
+          type: boolean
+        movieId:
+          type: integer
+          format: int32
+        hallId:
+          type: integer
+          format: int32
+        id:
+          type: integer
+          format: int32
+      additionalProperties: false
+    UpdateReservationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        userId:
+          type: integer
+          format: int32
+        projectionId:
+          type: integer
+          format: int32
+        numberOfSeats:
+          type: integer
+          format: int32
+        isConfirmed:
+          type: boolean
+      additionalProperties: false
+    UpdateUserDTO:
+      required:
+        - fullName
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        fullName:
+          maxLength: 100
+          minLength: 1
+          type: string
+      additionalProperties: false
+    User:
+      required:
+        - email
+        - fullName
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        username:
+          type: string
+          nullable: true
+        fullName:
+          maxLength: 100
+          minLength: 1
+          type: string
+        email:
+          maxLength: 100
+          minLength: 1
+          type: string
+        password:
+          type: string
+          nullable: true
+        registeredAt:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+        role:
+          type: string
+          nullable: true
+        reservations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reservation'
+          nullable: true
+      additionalProperties: false
+    UserDTO:
+      required:
+        - email
+        - fullName
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        username:
+          type: string
+          nullable: true
+        fullName:
+          maxLength: 100
+          minLength: 1
+          type: string
+        email:
+          maxLength: 100
+          minLength: 1
+          type: string
+        password:
+          type: string
+          nullable: true
+        registeredAt:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+      additionalProperties: false
