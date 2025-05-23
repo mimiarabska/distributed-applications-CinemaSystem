@@ -15,9 +15,15 @@ namespace CinemaAPI.Services.HallServices
             _context = context;
         }
 
-        public async Task<List<HallDTO>> GetAllHalls()
+        public async Task<PagedHallsDTO> GetAllHalls(PaginationParams pagination)
         {
-            return await _context.Halls
+            var query = _context.Halls.AsQueryable();
+
+            var totalCount = await query.CountAsync();
+
+            var halls = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
                 .Select(h => new HallDTO
                 {
                     Id = h.Id,
@@ -28,29 +34,30 @@ namespace CinemaAPI.Services.HallServices
                     SoundSystemQuality = h.SoundSystemQuality
                 })
                 .ToListAsync();
-        }
 
-        public async Task<HallDTO> GetHallById(int id)
-        {
-            var hall = await _context.Halls.FindAsync(id);
-            if (hall == null)
-                throw new KeyNotFoundException("Hall not found.");
-
-            return new HallDTO
+            return new PagedHallsDTO
             {
-                Id = hall.Id,
-                Name = hall.Name,
-                Capacity = hall.Capacity,
-                Has3D = hall.Has3D,
-                LocationDescription = hall.LocationDescription,
-                SoundSystemQuality = hall.SoundSystemQuality
+                Halls = halls,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
             };
         }
 
-        public async Task<List<HallDTO>> GetHallsByLocation(string location)
+        public async Task<PagedHallsDTO> GetHallsByLocation(string location, PaginationParams pagination)
         {
-            return await _context.Halls
-                .Where(h => h.LocationDescription.Contains(location))
+            var query = _context.Halls
+                .Where(h => h.LocationDescription.Contains(location));
+
+            var totalCount = await query.CountAsync();
+
+            var halls = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
                 .Select(h => new HallDTO
                 {
                     Id = h.Id,
@@ -61,9 +68,22 @@ namespace CinemaAPI.Services.HallServices
                     SoundSystemQuality = h.SoundSystemQuality
                 })
                 .ToListAsync();
+
+            return new PagedHallsDTO
+            {
+                Halls = halls,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
 
-        public async Task<IEnumerable<object>> SearchHalls(string? name, int? minCapacity)
+
+        public async Task<PagedHallsDTO> SearchHalls(string? name, int? minCapacity, PaginationParams pagination)
         {
             var query = _context.Halls.AsQueryable();
 
@@ -73,16 +93,35 @@ namespace CinemaAPI.Services.HallServices
             if (minCapacity.HasValue)
                 query = query.Where(h => h.Capacity >= minCapacity.Value);
 
-            return await query.Select(h => new
+            var totalCount = await query.CountAsync();
+
+            var halls = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .Select(h => new HallDTO
+                {
+                    Id = h.Id,
+                    Name = h.Name,
+                    Capacity = h.Capacity,
+                    Has3D = h.Has3D,
+                    LocationDescription = h.LocationDescription,
+                    SoundSystemQuality = h.SoundSystemQuality
+                })
+                .ToListAsync();
+
+            return new PagedHallsDTO
             {
-                h.Id,
-                h.Name,
-                h.LocationDescription,
-                h.Capacity,
-                h.SoundSystemQuality,
-                h.Has3D
-            }).ToListAsync();
+                Halls = halls,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
+
 
         public async Task<HallDTO> CreateHall(CreateHallDTO dto)
         {
@@ -143,6 +182,11 @@ namespace CinemaAPI.Services.HallServices
             await _context.SaveChangesAsync();
             return true;
             
+        }
+
+        public Task<HallDTO> GetHallById(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

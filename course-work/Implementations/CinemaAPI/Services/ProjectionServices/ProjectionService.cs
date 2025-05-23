@@ -17,27 +17,62 @@ namespace CinemaAPI.Services.ProjectionServices
             _context = context;
         }
 
-        public async Task<List<ProjectionDTO>> GetAllProjections()
+        public async Task<PagedProjectionsDTO> GetAllProjections(PaginationParams pagination)
         {
-            var projections = await _context.Projections
+            var query = _context.Projections
                 .Include(p => p.Movie)
                 .Include(p => p.Hall)
+                .AsQueryable();
+
+            var totalCount = await query.CountAsync();
+
+            var projections = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
                 .ToListAsync();
 
-            return projections.Select(MapProjectionToDTO).ToList();
+            var projectionDTOs = projections.Select(p => new ProjectionDTO
+            {
+                Id = p.Id,
+                StartTime = p.StartTime,
+                Price = p.Price,
+                IsPremiere = p.IsPremiere,
+                MovieId = p.MovieId,
+                Movie = new MovieDTO
+                {
+                    Title = p.Movie.Title,
+                    Description = p.Movie.Description,
+                    Genre = p.Movie.Genre,
+                    DurationMinutes = p.Movie.DurationMinutes,
+                    ReleaseDate = p.Movie.ReleaseDate,
+                    Is3D = p.Movie.Is3D
+                },
+                HallId = p.HallId,
+                Hall = new HallDTO
+                {
+                    Name = p.Hall.Name,
+                    Capacity = p.Hall.Capacity,
+                    Has3D = p.Hall.Has3D,
+                    LocationDescription = p.Hall.LocationDescription,
+                    SoundSystemQuality = p.Hall.SoundSystemQuality
+                },
+                DurationMinutes = p.Movie.DurationMinutes
+            }).ToList();
+
+            return new PagedProjectionsDTO
+            {
+                Projections = projectionDTOs,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
 
-        public async Task<List<ProjectionDTO>> GetProjectionsByDate(DateTime date)
-        {
-            var projections = await _context.Projections
-                .Include(p => p.Movie)
-                .Include(p => p.Hall)
-                .Where(p => p.StartTime.Date == date.Date)
-                .ToListAsync();
-
-            return projections.Select(MapProjectionToDTO).ToList();
-        }
-
+        
         public async Task<ProjectionDTO?> GetProjectionById(int id)
         {
             var p = await _context.Projections
@@ -50,17 +85,44 @@ namespace CinemaAPI.Services.ProjectionServices
 
             return MapProjectionToDTO(p);
         }
+        public async Task<PagedProjectionsDTO> GetProjectionsByDate(DateTime date, PaginationParams pagination)
+        {
+            var query = _context.Projections
+                .Include(p => p.Movie)
+                .Include(p => p.Hall)
+                .Where(p => p.StartTime.Date == date.Date);
 
-        public async Task<List<ProjectionDTO>> SearchProjections(string? movieTitle, DateTime? date)
+            var totalCount = await query.CountAsync();
+
+            var projections = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .ToListAsync();
+
+            return new PagedProjectionsDTO
+            {
+                Projections = projections.Select(MapProjectionToDTO).ToList(),
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
+        }
+
+        public async Task<PagedProjectionsDTO> SearchProjections(string? movieTitle, DateTime? date, PaginationParams pagination)
         {
             var query = _context.Projections
                 .Include(p => p.Movie)
                 .Include(p => p.Hall)
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(movieTitle))
+            if (!string.IsNullOrWhiteSpace(movieTitle))
             {
-                query = query.Where(p => p.Movie.Title.Contains(movieTitle));
+                var loweredTitle = movieTitle.ToLower();
+                query = query.Where(p => p.Movie.Title.ToLower().Contains(loweredTitle));
             }
 
             if (date.HasValue)
@@ -68,9 +130,24 @@ namespace CinemaAPI.Services.ProjectionServices
                 query = query.Where(p => p.StartTime.Date == date.Value.Date);
             }
 
-            var projections = await query.ToListAsync();
+            var totalCount = await query.CountAsync();
 
-            return projections.Select(MapProjectionToDTO).ToList();
+            var projections = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .ToListAsync();
+
+            return new PagedProjectionsDTO
+            {
+                Projections = projections.Select(MapProjectionToDTO).ToList(),
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
 
         public async Task<ProjectionDTO> CreateProjection(CreateProjectionDTO dto)

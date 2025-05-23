@@ -1,5 +1,6 @@
-﻿using CinemaAPI.DTO_s.ProjectionDTOs;
-
+﻿using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.ProjectionDTOs;
+using CinemaAPI.DTO_s.ProjectionDTOss;
 using CinemaAPI.Services.ProjectionServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,11 @@ public class ProjectionController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<ProjectionDTO>>> GetAllProjections()
+    public async Task<ActionResult<PagedProjectionsDTO>> GetAllProjections([FromQuery] PaginationParams pagination)
     {
         try
         {
-            var result = await _service.GetAllProjections();
+            var result = await _service.GetAllProjections(pagination);
             return Ok(result);
         }
         catch (Exception ex)
@@ -33,11 +34,11 @@ public class ProjectionController : ControllerBase
 
     [HttpGet("by-date")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<ProjectionDTO>>> GetByDate([FromQuery] DateTime date)
+    public async Task<ActionResult<PagedProjectionsDTO>> GetByDate([FromQuery] DateTime date, [FromQuery] PaginationParams pagination)
     {
         try
         {
-            var result = await _service.GetProjectionsByDate(date);
+            var result = await _service.GetProjectionsByDate(date, pagination);
             return Ok(result);
         }
         catch (Exception ex)
@@ -45,6 +46,22 @@ public class ProjectionController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("search")]
+    [AllowAnonymous]
+    public async Task<ActionResult<PagedProjectionsDTO>> SearchProjections([FromQuery] string? movieTitle, [FromQuery] DateTime? date, [FromQuery] PaginationParams pagination)
+    {
+        try
+        {
+            var result = await _service.SearchProjections(movieTitle, date, pagination);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ProjectionDTO>> GetProjection(int id)
@@ -61,20 +78,7 @@ public class ProjectionController : ControllerBase
         }
     }
 
-    [HttpGet("search")]
-    [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<ProjectionDTO>>> SearchProjections([FromQuery] string? movieTitle, [FromQuery] DateTime? date)
-    {
-        try
-        {
-            var result = await _service.SearchProjections(movieTitle, date);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
+
 
     [HttpPost]
     [Authorize(Roles = "Admin")]

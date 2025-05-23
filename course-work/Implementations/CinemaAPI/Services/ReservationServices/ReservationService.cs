@@ -1,4 +1,6 @@
 ﻿using CinemaAPI.Data;
+using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.Movie;
 using CinemaAPI.DTO_s.Reservation;
 using CinemaAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -6,46 +8,27 @@ using Microsoft.EntityFrameworkCore;
 namespace CinemaAPI.Services.ReservationService
 {
 
-    
-        public class ReservationService : IReservationService
+
+    public class ReservationService : IReservationService
+    {
+        private readonly CinemaDbContext _context;
+
+        public ReservationService(CinemaDbContext context)
         {
-            private readonly CinemaDbContext _context;
+            _context = context;
+        }
 
-            public ReservationService(CinemaDbContext context)
-            {
-                _context = context;
-            }
+        public async Task<PagedReservationsDTO> GetAllReservations(PaginationParams pagination)
+        {
+            var query = _context.Reservations.AsQueryable();
 
-            public async Task<List<ReservationDTO>> GetAllReservations()
-            {
-                return await _context.Reservations
-                    .Include(r => r.User)
-                    .Include(r => r.Projection)
-                    .Select(r => new ReservationDTO
-                    {
-                        Id = r.Id,
-                        UserId = r.UserId,
-                        ProjectionId = r.ProjectionId,
-                        NumberOfSeats = r.NumberOfSeats,
-                        ReservationTime = r.ReservationTime,
-                        IsConfirmed = r.IsConfirmed,
-                        TotalPrice = r.TotalPrice
-                    })
-                    .ToListAsync();
-            }
+            var totalCount = await query.CountAsync();
 
-            public async Task<ReservationDTO?> GetReservationById(int id)
-            {
-                var r = await _context.Reservations
-                    .Include(r => r.Projection)
-                        .ThenInclude(p => p.Movie)
-                    .Include(r => r.Projection)
-                        .ThenInclude(p => p.Hall)
-                    .FirstOrDefaultAsync(r => r.Id == id);
 
-                if (r == null) return null;
-
-                return new ReservationDTO
+            var reservations = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .Select(r => new ReservationDTO
                 {
                     Id = r.Id,
                     UserId = r.UserId,
@@ -54,82 +37,118 @@ namespace CinemaAPI.Services.ReservationService
                     ReservationTime = r.ReservationTime,
                     IsConfirmed = r.IsConfirmed,
                     TotalPrice = r.TotalPrice
-                };
-            }
-
-            public async Task<List<ReservationDTO>> GetReservationsByUserId(int userId)
+                })
+                        .ToListAsync();
+            return new PagedReservationsDTO
             {
-                return await _context.Reservations
-                    .Where(r => r.UserId == userId)
-                    .Select(r => new ReservationDTO
-                    {
-                        Id = r.Id,
-                        UserId = r.UserId,
-                        ProjectionId = r.ProjectionId,
-                        NumberOfSeats = r.NumberOfSeats,
-                        ReservationTime = r.ReservationTime,
-                        IsConfirmed = r.IsConfirmed,
-                        TotalPrice = r.TotalPrice
-                    })
-                    .ToListAsync();
-            }
+                Reservations = reservations,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
+        }
 
-            public async Task<ReservationDTO> CreateReservation(CreateReservationDTO dto)
+
+        public async Task<ReservationDTO?> GetReservationById(int id)
+        {
+            var r = await _context.Reservations
+                .Include(r => r.Projection)
+                    .ThenInclude(p => p.Movie)
+                .Include(r => r.Projection)
+                    .ThenInclude(p => p.Hall)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (r == null) return null;
+
+            return new ReservationDTO
             {
-                var projection = await _context.Projections.FindAsync(dto.ProjectionId);
-                if (projection == null) throw new Exception("Invalid projection ID");
+                Id = r.Id,
+                UserId = r.UserId,
+                ProjectionId = r.ProjectionId,
+                NumberOfSeats = r.NumberOfSeats,
+                ReservationTime = r.ReservationTime,
+                IsConfirmed = r.IsConfirmed,
+                TotalPrice = r.TotalPrice
+            };
+        }
 
-                var reservation = new Reservation
+        public async Task<List<ReservationDTO>> GetReservationsByUserId(int userId)
+        {
+            return await _context.Reservations
+                .Where(r => r.UserId == userId)
+                .Select(r => new ReservationDTO
                 {
-                    UserId = dto.UserId,
-                    ProjectionId = dto.ProjectionId,
-                    NumberOfSeats = dto.NumberOfSeats,
-                    ReservationTime = dto.ReservationTime,
-                    IsConfirmed = dto.IsConfirmed,
-                    TotalPrice = dto.NumberOfSeats * projection.Price
-                };
+                    Id = r.Id,
+                    UserId = r.UserId,
+                    ProjectionId = r.ProjectionId,
+                    NumberOfSeats = r.NumberOfSeats,
+                    ReservationTime = r.ReservationTime,
+                    IsConfirmed = r.IsConfirmed,
+                    TotalPrice = r.TotalPrice
+                })
+                .ToListAsync();
+        }
 
-                _context.Reservations.Add(reservation);
-                await _context.SaveChangesAsync();
+        public async Task<ReservationDTO> CreateReservation(CreateReservationDTO dto)
+        {
+            var projection = await _context.Projections.FindAsync(dto.ProjectionId);
+            if (projection == null) throw new Exception("Invalid projection ID");
 
-                return new ReservationDTO
-                {
-                    Id = reservation.Id,
-                    UserId = reservation.UserId,
-                    ProjectionId = reservation.ProjectionId,
-                    NumberOfSeats = reservation.NumberOfSeats,
-                    ReservationTime = reservation.ReservationTime,
-                    IsConfirmed = reservation.IsConfirmed,
-                    TotalPrice = reservation.TotalPrice
-                };
-            }
-
-            public async Task<ReservationDTO?> UpdateReservation(int id, UpdateReservationDTO dto, int userIdFromToken, bool isAdmin)
+            var reservation = new Reservation
             {
-                var reservation = await _context.Reservations.FindAsync(dto.Id);
-                if (reservation == null) return null;
+                UserId = dto.UserId,
+                ProjectionId = dto.ProjectionId,
+                NumberOfSeats = dto.NumberOfSeats,
+                ReservationTime = dto.ReservationTime,
+                IsConfirmed = dto.IsConfirmed,
+                TotalPrice = dto.NumberOfSeats * projection.Price
+            };
 
-                var projection = await _context.Projections.FindAsync(dto.ProjectionId);
-                if (projection == null) throw new Exception("Invalid projection ID");
+            _context.Reservations.Add(reservation);
+            await _context.SaveChangesAsync();
 
-                reservation.ProjectionId = dto.ProjectionId;
-                reservation.NumberOfSeats = dto.NumberOfSeats;
-                reservation.IsConfirmed = dto.IsConfirmed;
-                reservation.TotalPrice = dto.NumberOfSeats * projection.Price;
+            return new ReservationDTO
+            {
+                Id = reservation.Id,
+                UserId = reservation.UserId,
+                ProjectionId = reservation.ProjectionId,
+                NumberOfSeats = reservation.NumberOfSeats,
+                ReservationTime = reservation.ReservationTime,
+                IsConfirmed = reservation.IsConfirmed,
+                TotalPrice = reservation.TotalPrice
+            };
+        }
 
-                await _context.SaveChangesAsync();
+        public async Task<ReservationDTO?> UpdateReservation(int id, UpdateReservationDTO dto, int userIdFromToken, bool isAdmin)
+        {
+            var reservation = await _context.Reservations.FindAsync(dto.Id);
+            if (reservation == null) return null;
 
-                return new ReservationDTO
-                {
-                    Id = reservation.Id,
-                    UserId = reservation.UserId,
-                    ProjectionId = reservation.ProjectionId,
-                    NumberOfSeats = reservation.NumberOfSeats,
-                    ReservationTime = reservation.ReservationTime,
-                    IsConfirmed = reservation.IsConfirmed,
-                    TotalPrice = reservation.TotalPrice
-                };
-            }
+            var projection = await _context.Projections.FindAsync(dto.ProjectionId);
+            if (projection == null) throw new Exception("Invalid projection ID");
+
+            reservation.ProjectionId = dto.ProjectionId;
+            reservation.NumberOfSeats = dto.NumberOfSeats;
+            reservation.IsConfirmed = dto.IsConfirmed;
+            reservation.TotalPrice = dto.NumberOfSeats * projection.Price;
+
+            await _context.SaveChangesAsync();
+
+            return new ReservationDTO
+            {
+                Id = reservation.Id,
+                UserId = reservation.UserId,
+                ProjectionId = reservation.ProjectionId,
+                NumberOfSeats = reservation.NumberOfSeats,
+                ReservationTime = reservation.ReservationTime,
+                IsConfirmed = reservation.IsConfirmed,
+                TotalPrice = reservation.TotalPrice
+            };
+        }
 
         public async Task<bool> DeleteReservation(int id)
         {
@@ -144,36 +163,53 @@ namespace CinemaAPI.Services.ReservationService
             _context.Reservations.Remove(reservation);
             await _context.SaveChangesAsync();
 
-            return true; 
+            return true;
         }
 
-        public async Task<List<ReservationDTO>> SearchReservation(int? minSeats, bool? isConfirmed)
+        public async Task<PagedReservationsDTO> SearchReservation(int? minSeats, bool? isConfirmed, PaginationParams pagination)
+        {
+            var query = _context.Reservations.AsQueryable();
+
+            if (minSeats.HasValue)
+                query = query.Where(r => r.NumberOfSeats >= minSeats.Value);
+
+            if (isConfirmed.HasValue)
+                query = query.Where(r => r.IsConfirmed == isConfirmed.Value);
+
+            var totalCount = await query.CountAsync();
+
+            var reservations = await query
+                 .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                 .Take(pagination.ItemsPerPage)
+                 .Select(r => new ReservationDTO
+                 {
+                     Id = r.Id,
+                     UserId = r.UserId,
+                     ProjectionId = r.ProjectionId,
+                     NumberOfSeats = r.NumberOfSeats,
+                     ReservationTime = r.ReservationTime,
+                     IsConfirmed = r.IsConfirmed,
+                     TotalPrice = r.TotalPrice
+                 })
+                 .ToListAsync();
+
+            return new PagedReservationsDTO
             {
-                var query = _context.Reservations.AsQueryable();
+                Reservations = reservations,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
+        }
 
-                if (minSeats.HasValue)
-                    query = query.Where(r => r.NumberOfSeats >= minSeats.Value);
-
-                if (isConfirmed.HasValue)
-                    query = query.Where(r => r.IsConfirmed == isConfirmed.Value);
-
-                return await query
-                    .Select(r => new ReservationDTO
-                    {
-                        Id = r.Id,
-                        UserId = r.UserId,
-                        ProjectionId = r.ProjectionId,
-                        NumberOfSeats = r.NumberOfSeats,
-                        ReservationTime = r.ReservationTime,
-                        IsConfirmed = r.IsConfirmed,
-                        TotalPrice = r.TotalPrice
-                    })
-                    .ToListAsync();
-            }
 
 
     }
-    
+
 
 }
 

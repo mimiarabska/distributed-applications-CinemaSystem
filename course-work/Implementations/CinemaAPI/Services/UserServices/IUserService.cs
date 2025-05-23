@@ -1,4 +1,5 @@
-﻿using CinemaAPI.DTO_s.UserDTO;
+﻿using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.UserDTO;
 
 namespace CinemaAPI.Services.UserServices
 {
@@ -6,7 +7,7 @@ namespace CinemaAPI.Services.UserServices
     {
         Task<string> Register(RegisterUserDTO dto);
         Task<string?> Login(LoginUserDTO dto);
-        Task<List<UserDTO>> GetAll();
+        Task<PagedUsersDTO> GetAllUsers(PaginationParams pagination);
         Task<UserDTO?> GetById(int id);
         Task<UserDTO?> GetByUsername(string username);
         Task<UserDTO?> GetByEmail(string email);

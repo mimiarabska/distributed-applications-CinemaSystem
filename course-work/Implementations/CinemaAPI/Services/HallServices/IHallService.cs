@@ -1,13 +1,14 @@
-﻿using CinemaAPI.DTO_s.HallDTOs;
+﻿using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.HallDTOs;
 
 namespace CinemaAPI.Services.HallServices
 {
     public interface IHallService
     {
-        Task<List<HallDTO>> GetAllHalls();
+        Task<PagedHallsDTO> GetAllHalls(PaginationParams pagination);
         Task<HallDTO> GetHallById(int id);
-        Task<List<HallDTO>> GetHallsByLocation(string location);
-        Task<IEnumerable<object>> SearchHalls(string? name, int? minCapacity);
+        Task<PagedHallsDTO> GetHallsByLocation(string location, PaginationParams pagination);
+        Task<PagedHallsDTO> SearchHalls(string? name, int? minCapacity, PaginationParams pagination);
         Task<HallDTO> CreateHall(CreateHallDTO dto);
         Task<HallDTO> UpdateHall(int id, UpdateHallDTO dto);
         Task<bool> DeleteHall(int id);

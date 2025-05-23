@@ -1,4 +1,6 @@
-﻿using CinemaAPI.DTO_s.UserDTO;
+﻿using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.UserDTO;
+using CinemaAPI.Services.MovieServices;
 using CinemaAPI.Services.UserServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,10 +60,14 @@ public class UserController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<ActionResult<List<UserDTO>>> GetAll()
+    public async Task<ActionResult<List<UserDTO>>> GetAll(int page = 1,
+            int itemsPerPage = 10)
     {
-        var users = await userService.GetAll();
-        return Ok(users);
+        return Ok(await userService.GetAllUsers(new PaginationParams()
+        {
+            ItemsPerPage = itemsPerPage,
+            Page = page
+        }));
     }
 
     [Authorize]

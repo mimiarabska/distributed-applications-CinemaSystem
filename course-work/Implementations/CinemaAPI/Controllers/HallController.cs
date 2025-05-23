@@ -1,4 +1,5 @@
-﻿using CinemaAPI.DTO_s.HallDTOs;
+﻿using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.HallDTOs;
 using CinemaAPI.Services.HallServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,14 @@ namespace CinemaAPI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<HallDTO>>> GetAllHalls()
+        public async Task<ActionResult<IEnumerable<HallDTO>>> GetAllHalls(int page = 1,
+            int itemsPerPage = 10)
         {
-            return Ok(await hallService.GetAllHalls());
+            return Ok(await hallService.GetAllHalls(new PaginationParams()
+            {
+                ItemsPerPage = itemsPerPage,
+                Page = page
+            }));
         }
 
         [HttpGet("{id}")]
@@ -33,9 +39,10 @@ namespace CinemaAPI.Controllers
 
         [HttpGet("search")]
         [AllowAnonymous]
-        public async Task<IActionResult> SearchHalls([FromQuery] string? name, [FromQuery] int? minCapacity)
+        public async Task<IActionResult> SearchHalls([FromQuery] string? name, [FromQuery] int? minCapacity, int page = 1, int itemsPerPage = 10)
         {
-            return Ok(await hallService.SearchHalls(name, minCapacity));
+            return Ok(await hallService.SearchHalls(name, minCapacity, new PaginationParams()
+            { Page = page, ItemsPerPage = itemsPerPage }));
         }
 
         [HttpPost]
@@ -78,9 +85,11 @@ namespace CinemaAPI.Controllers
 
         [HttpGet("location")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<HallDTO>>> GetHallsByLocation([FromQuery] string location)
+        public async Task<ActionResult<PagedHallsDTO>> GetHallsByLocation([FromQuery] string location, int page = 1, int itemsPerPage = 10)
         {
-            return Ok(await hallService.GetHallsByLocation(location));
+            return Ok(await hallService.GetHallsByLocation(location, new PaginationParams()
+            { Page = page, ItemsPerPage = itemsPerPage }));
+            
         }
     }
 }

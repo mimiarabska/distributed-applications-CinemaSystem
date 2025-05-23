@@ -2,6 +2,7 @@
 using CinemaAPI.DTO_s.Reservation;
 using Microsoft.AspNetCore.Authorization;
 using CinemaAPI.Services.ReservationService;
+using CinemaAPI.DTO_s;
 
 namespace CinemaAPI.Controllers
 {
@@ -18,11 +19,16 @@ namespace CinemaAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAll()
+        public async Task<ActionResult<PagedReservationsDTO>> GetAll(int page = 1, int itemsPerPage = 2)
         {
             try
             {
-                var reservations = await _service.GetAllReservations();
+                var reservations = await _service.GetAllReservations(new PaginationParams()
+                {
+                    ItemsPerPage = itemsPerPage,
+                    Page = page,
+                });
+
                 return Ok(reservations);
             }
             catch (Exception ex)
@@ -130,5 +136,24 @@ namespace CinemaAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-    }
+        [HttpGet("search")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<PagedReservationsDTO>> SearchReservations([FromQuery] int? minSeats,[FromQuery] bool? isConfirmed,
+         [FromQuery] int page = 1, [FromQuery] int itemsPerPage = 2)
+            {
+                var pagination = new PaginationParams
+                {
+                    Page = page,
+                    ItemsPerPage = itemsPerPage
+                };
+
+                var result = await _service.SearchReservation(minSeats, isConfirmed, pagination);
+
+                if (result == null || result.Reservations.Count == 0)
+                    return NotFound("No reservations found matching the criteria.");
+
+                return Ok(result);
+            }
+
+        }
 }

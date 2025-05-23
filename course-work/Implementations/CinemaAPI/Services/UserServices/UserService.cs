@@ -1,4 +1,5 @@
 ﻿using CinemaAPI.Data;
+using CinemaAPI.DTO_s;
 using CinemaAPI.DTO_s.UserDTO;
 using CinemaAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -44,16 +45,35 @@ namespace CinemaAPI.Services.UserServices
             return user == null ? null : tokenService.GenerateToken(user);
         }
 
-        public async Task<List<UserDTO>> GetAll()
+        public async Task<PagedUsersDTO> GetAllUsers(PaginationParams pagination)
         {
-            return await context.Users
+            var query = context.Users.AsQueryable();
+
+            var totalCount = await query.CountAsync();
+
+            var users = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
                 .Select(u => new UserDTO
                 {
                     Id = u.Id,
                     Username = u.Username,
-                    FullName = u.FullName,
                     Email = u.Email
-                }).ToListAsync();
+                    
+                })
+                .ToListAsync();
+
+            return new PagedUsersDTO
+            {
+                Users = users,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
 
         public async Task<UserDTO?> GetById(int id)

@@ -1,4 +1,5 @@
 ﻿using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.Movie;
 using CinemaAPI.Services.MovieServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,13 @@ public class MovieController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
+    public async Task<ActionResult<PagedMoviesDTO>>GetAllMovies(int page = 1, int itemsPerPage = 10)
     {
-        return Ok(await movieService.GetAllMovies());
+        return Ok(await movieService.GetAllMovies(new PaginationParams()
+        {
+            ItemsPerPage = itemsPerPage,
+            Page = page
+        }));
     }
 
     [HttpGet("{id}")]
@@ -53,31 +58,34 @@ public class MovieController : ControllerBase
 
     [HttpGet("year")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMoviesByYear([FromQuery] int year)
+    public async Task<ActionResult<PagedMoviesDTO>> GetMoviesByYear([FromQuery] int year, int page = 1, int itemsPerPage = 10)
     {
-        return Ok(await movieService.GetMoviesByYear(year));
+        return Ok(await movieService.GetMoviesByYear(year, new PaginationParams()
+        { Page = page, ItemsPerPage = itemsPerPage }));
     }
 
     [HttpGet("genre")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMoviesByGenre([FromQuery] string genre)
+    public async Task<ActionResult<PagedMoviesDTO>> GetMoviesByGenre([FromQuery] string genre, int page = 1, int itemsPerPage = 10)
     {
-        return Ok(await movieService.GetMoviesByGenre(genre));
+        return Ok(await movieService.GetMoviesByGenre(genre, new PaginationParams()
+        { Page = page, ItemsPerPage = itemsPerPage }));
     }
 
     [HttpGet("3D")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMoviesWith3D()
+    public async Task<ActionResult<PagedMoviesDTO>> GetMoviesWith3D(int page = 1, int itemsPerPage = 10)
     {
-        return Ok(await movieService.GetMoviesWith3D());
+        return Ok(await movieService.GetMoviesWith3D(new PaginationParams()
+        { Page = page, ItemsPerPage = itemsPerPage }));
     }
 
     [HttpGet("search")]
     [AllowAnonymous]
-    public async Task<IActionResult> SearchMovies([FromQuery] DateTime? releaseDateFrom, [FromQuery] DateTime? releaseDateTo)
+    public async Task<ActionResult<PagedMoviesDTO>> SearchMovies([FromQuery] DateTime? releaseDateFrom, [FromQuery] DateTime? releaseDateTo, int page = 1, int itemsPerPage = 10)
     {
-        var movies = await movieService.SearchMovies(releaseDateFrom, releaseDateTo);
-        return Ok(movies);
+        return Ok(await movieService.SearchMovies(releaseDateFrom, releaseDateTo, new PaginationParams() 
+        { Page = page, ItemsPerPage = itemsPerPage }));
     }
 
     [HttpDelete("{id}")]

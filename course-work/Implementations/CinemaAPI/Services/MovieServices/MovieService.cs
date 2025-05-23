@@ -1,5 +1,6 @@
 ﻿using CinemaAPI.Data;
 using CinemaAPI.DTO_s;
+using CinemaAPI.DTO_s.Movie;
 using CinemaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,80 +15,143 @@ namespace CinemaAPI.Services.MovieServices
             _context = context;
         }
 
-        //public async Task<MovieDTO> GetPagedMoviesAsync(int page, int itemsPerPage)
-        //{
-        //    var query = _context.Movies.Select(m => new MovieDTO
-        //    {
-        //        Title = m.Title,
-        //        Description = m.Description,
-        //        Genre = m.Genre,
-        //        DurationMinutes = m.DurationMinutes,
-        //        ReleaseDate = m.ReleaseDate,
-        //        Is3D = m.Is3D
-        //    });
-
-        //    var totalItems = await query.CountAsync();
-        //    var pagesCount = (int)Math.Ceiling((double)totalItems / itemsPerPage);
-
-        //    var movies = await query
-        //        .Skip((page - 1) * itemsPerPage)
-        //        .Take(itemsPerPage)
-        //        .ToListAsync();
-
-        //    return new MovieDTO
-        //    {
-        //        Movies = movies,
-        //        Pager = new PagerDTO
-        //        {
-        //            Page = page,
-        //            ItemsPerPage = itemsPerPage,
-        //            PagesCount = pagesCount,
-        //            TotalItems = totalItems
-        //        }
-        //    };
-        //}
-
-
-        public async Task<IEnumerable<MovieDTO>> GetAllMovies()
+        public async Task<PagedMoviesDTO> GetAllMovies(PaginationParams pagination)
         {
-            var movies = await _context.Movies.ToListAsync();
-            return movies.Select(MapMovieToDTO);
-        }
+            var query = _context.Movies.AsQueryable();
 
-        public async Task<MovieDTO?> GetMovieById(int id)
-        {
-            var movie = await _context.Movies.FindAsync(id);
-            return movie == null ? null : MapMovieToDTO(movie);
-        }
+            var totalCount = await query.CountAsync();
 
-        public async Task<IEnumerable<MovieDTO>> GetMoviesByYear(int year)
-        {
-            var movies = await _context.Movies
-                .Where(m => m.ReleaseDate.Year == year)
+            var movies = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .Select(m => new MovieDTO
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Description = m.Description,
+                    Genre = m.Genre,
+                    DurationMinutes = m.DurationMinutes,
+                    ReleaseDate = m.ReleaseDate,
+                    Is3D = m.Is3D
+                })
                 .ToListAsync();
 
-            return movies.Select(MapMovieToDTO);
+            return new PagedMoviesDTO
+            {
+                Movies = movies,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
 
-        public async Task<IEnumerable<MovieDTO>> GetMoviesByGenre(string genre)
+        public async Task<PagedMoviesDTO> GetMoviesByYear(int year, PaginationParams pagination)
         {
-            var movies = await _context.Movies
-                .Where(m => m.Genre.ToLower() == genre.ToLower())
+            var query = _context.Movies.Where(m => m.ReleaseDate.Year == year);
+
+            var totalCount = await query.CountAsync();
+
+            var movies = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .Select(m => new MovieDTO
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Description = m.Description,
+                    Genre = m.Genre,
+                    DurationMinutes = m.DurationMinutes,
+                    ReleaseDate = m.ReleaseDate,
+                    Is3D = m.Is3D
+                })
                 .ToListAsync();
 
-            return movies.Select(MapMovieToDTO);
+            return new PagedMoviesDTO
+            {
+                Movies = movies,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
 
-        public async Task<IEnumerable<MovieDTO>> GetMoviesWith3D()
+        public async Task<PagedMoviesDTO> GetMoviesByGenre(string genre, PaginationParams pagination)
         {
-            var movies = await _context.Movies
-                .Where(m => m.Is3D)
+            var query = _context.Movies.Where(m => m.Genre.ToLower() == genre.ToLower());
+
+            var totalCount = await query.CountAsync();
+
+            var movies = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .Select(m => new MovieDTO
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Description = m.Description,
+                    Genre = m.Genre,
+                    DurationMinutes = m.DurationMinutes,
+                    ReleaseDate = m.ReleaseDate,
+                    Is3D = m.Is3D
+                })
                 .ToListAsync();
 
-            return movies.Select(MapMovieToDTO);
+            return new PagedMoviesDTO
+            {
+                Movies = movies,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
         }
 
-        public async Task<IEnumerable<MovieDTO>> SearchMovies(DateTime? releaseDateFrom, DateTime? releaseDateTo)
+        public async Task<PagedMoviesDTO> GetMoviesWith3D(PaginationParams pagination)
+        {
+            var query = _context.Movies.Where(m => m.Is3D);
+
+            var totalCount = await query.CountAsync();
+
+            var movies = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .Select(m => new MovieDTO
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Description = m.Description,
+                    Genre = m.Genre,
+                    DurationMinutes = m.DurationMinutes,
+                    ReleaseDate = m.ReleaseDate,
+                    Is3D = m.Is3D
+                })
+                .ToListAsync();
+
+            return new PagedMoviesDTO
+            {
+                Movies = movies,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
+        }
+
+        public async Task<PagedMoviesDTO> SearchMovies(DateTime? releaseDateFrom, DateTime? releaseDateTo, PaginationParams pagination)
         {
             var query = _context.Movies.AsQueryable();
 
@@ -97,8 +161,40 @@ namespace CinemaAPI.Services.MovieServices
             if (releaseDateTo.HasValue)
                 query = query.Where(m => m.ReleaseDate <= releaseDateTo.Value);
 
-            var movies = await query.ToListAsync();
-            return movies.Select(MapMovieToDTO);
+            var totalCount = await query.CountAsync();
+
+            var movies = await query
+                .Skip((pagination.Page - 1) * pagination.ItemsPerPage)
+                .Take(pagination.ItemsPerPage)
+                .Select(m => new MovieDTO
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Description = m.Description,
+                    Genre = m.Genre,
+                    DurationMinutes = m.DurationMinutes,
+                    ReleaseDate = m.ReleaseDate,
+                    Is3D = m.Is3D
+                })
+                .ToListAsync();
+
+            return new PagedMoviesDTO
+            {
+                Movies = movies,
+                Pager = new PagerDTO
+                {
+                    Page = pagination.Page,
+                    ItemsPerPage = pagination.ItemsPerPage,
+                    TotalItems = totalCount,
+                    PagesCount = (int)Math.Ceiling((double)totalCount / pagination.ItemsPerPage)
+                }
+            };
+        }
+
+        public async Task<MovieDTO?> GetMovieById(int id)
+        {
+            var movie = await _context.Movies.FindAsync(id);
+            return movie == null ? null : MapMovieToDTO(movie);
         }
 
         public async Task<MovieDTO> CreateMovie(CreateMovieDTO dto)
@@ -148,6 +244,7 @@ namespace CinemaAPI.Services.MovieServices
         {
             return new MovieDTO
             {
+                Id = m.Id,
                 Title = m.Title,
                 Description = m.Description,
                 Genre = m.Genre,
@@ -156,5 +253,7 @@ namespace CinemaAPI.Services.MovieServices
                 Is3D = m.Is3D
             };
         }
+
+
     }
 }
