@@ -1,3 +1,6 @@
+using CinemaMvcClient.Services;
+using CinemaMvcClient.Services.MovieServices;
+
 namespace CinemaMvcClient
 {
     public class Program
@@ -15,10 +18,10 @@ namespace CinemaMvcClient
                 .GetSection("ApiSettings")
                 .Get<ApiSettings>();
 
-            //builder.Services.AddHttpClient<IMovieService, MovieService>(client =>
-            //{
-            //    client.BaseAddress = new Uri(apiSettings.BaseUrl);
-            //});
+            builder.Services.AddHttpClient<IMovieService, MovieService>(client =>
+            {
+                client.BaseAddress = new Uri(apiSettings.BaseUrl);
+            });
 
 
             // Add services to the container.

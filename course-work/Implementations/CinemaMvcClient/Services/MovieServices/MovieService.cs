@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using CinemaMvcClient.Services.MovieServices;
 using CinemaMvcClient.DTO_s.Movie;
 using CinemaMvcClient.DTO_s;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 
 namespace CinemaMvcClient.Services
 {
@@ -17,7 +19,13 @@ namespace CinemaMvcClient.Services
         {
             _httpClient = httpClient;
         }
-
+        private void SetAuthorizationHeader(string token)
+        {
+            if (_httpClient.DefaultRequestHeaders.Authorization?.Parameter != token)
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+        }
         public async Task<PagedMoviesDTO> GetAllMoviesAsync(PaginationParams pagination)
         {
             var url = $"{_baseUrl}?page={pagination.Page}&itemsPerPage={pagination.ItemsPerPage}";
@@ -28,8 +36,9 @@ namespace CinemaMvcClient.Services
             return JsonConvert.DeserializeObject<PagedMoviesDTO>(content);
         }
 
-        public async Task<MovieDTO> GetMovieByIdAsync(int id)
+        public async Task<MovieDTO> GetMovieByIdAsync(string token,int id)
         {
+            SetAuthorizationHeader(token);
             var url = $"{_baseUrl}{id}";
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
@@ -91,8 +100,9 @@ namespace CinemaMvcClient.Services
         }
 
 
-        public async Task<MovieDTO> CreateMovieAsync(CreateMovieDTO movie)
+        public async Task<MovieDTO> CreateMovieAsync(string token,CreateMovieDTO movie)
         {
+            SetAuthorizationHeader(token);
             var json = JsonConvert.SerializeObject(movie);
             var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
@@ -103,8 +113,9 @@ namespace CinemaMvcClient.Services
             return JsonConvert.DeserializeObject<MovieDTO>(responseContent);
         }
 
-        public async Task<MovieDTO> UpdateMovieAsync(int id, UpdateMovieDTO movie)
+        public async Task<MovieDTO> UpdateMovieAsync(string token,int id, UpdateMovieDTO movie)
         {
+            SetAuthorizationHeader(token);
             var json = JsonConvert.SerializeObject(movie);
             var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
@@ -115,8 +126,9 @@ namespace CinemaMvcClient.Services
             return JsonConvert.DeserializeObject<MovieDTO>(responseContent);
         }
 
-        public async Task<bool> DeleteMovieAsync(int id)
+        public async Task<bool> DeleteMovieAsync(string token,int id)
         {
+            SetAuthorizationHeader(token);
             var response = await _httpClient.DeleteAsync($"{_baseUrl}{id}");
             return response.IsSuccessStatusCode;
         }
