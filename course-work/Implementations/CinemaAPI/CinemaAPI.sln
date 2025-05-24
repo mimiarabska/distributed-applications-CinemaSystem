@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaAPI", "CinemaAPI.csproj", "{E2572401-B9A8-42CA-B8DC-66D910D2E0EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaMvcClient", "..\CinemaMvcClient\CinemaMvcClient.csproj", "{53822EB8-CABE-497F-AD8D-7403B2E9C688}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{E2572401-B9A8-42CA-B8DC-66D910D2E0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2572401-B9A8-42CA-B8DC-66D910D2E0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2572401-B9A8-42CA-B8DC-66D910D2E0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53822EB8-CABE-497F-AD8D-7403B2E9C688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53822EB8-CABE-497F-AD8D-7403B2E9C688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53822EB8-CABE-497F-AD8D-7403B2E9C688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53822EB8-CABE-497F-AD8D-7403B2E9C688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
