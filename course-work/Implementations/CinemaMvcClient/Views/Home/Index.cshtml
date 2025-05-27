@@ -1,8 +1,25 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Cinema System";
+    var isLogged = Context.Session.GetString("JWTToken");
 }
-
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1>Welcome to Cinema System</h1>
+
+    @if (!string.IsNullOrEmpty(isLogged))
+    {
+        <p>Hello</p>
+        <a asp-controller="User" asp-action="Logout" class="btn btn-danger">Logout</a> 
+      @if(User.IsInRole("Admin")){
+        <a asp-controller="User" asp-action="Index" class="btn btn-danger">Users</a>
+        <a asp-controller="Movie" asp-action="Index" class="btn btn-danger">Movies</a>
+        }
+    }
+
+    else
+    {
+        <div class="mt-4">
+            <a asp-controller="User" asp-action="Login" class="btn btn-primary">Login</a>
+            <a asp-controller="User" asp-action="Register" class="btn btn-secondary">Register</a>
+        </div>
+    }
 </div>

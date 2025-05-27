@@ -1,0 +1,19 @@
+﻿@model CinemaMvcClient.DTO_s.MovieDTO
+
+@{
+    ViewData["Title"] = "Delete Movie";
+}
+
+<h2>Delete Movie</h2>
+
+<h4>Are you sure you want to delete this movie?</h4>
+
+<div>
+    <strong>@Model.Title</strong> – @Model.Genre
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,14 @@
+﻿@using CinemaMvcClient.DTO_s
+
+<h2>User Profile</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5>@Model.FullName</h5>
+        <p><strong>Username:</strong> @Model.Username</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit Profile</a>
+        <a asp-action="Index" class="btn btn-secondary">Go Back</a>
+    </div>
+</div>
